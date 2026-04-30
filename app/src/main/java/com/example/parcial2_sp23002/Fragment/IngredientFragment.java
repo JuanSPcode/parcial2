@@ -69,8 +69,7 @@ public class IngredientFragment extends Fragment implements IngredientAdapter.On
 
     @Override
     public void onDeleteClick(Ingredient ingredient) {
-        db.ingredientDao().eliminar(ingredient.idIngredient);
-        Toast.makeText(getContext(), "Ingrediente eliminado", Toast.LENGTH_SHORT).show();
+
 
 
         new AlertDialog.Builder(getContext())
