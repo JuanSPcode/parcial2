@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_recipes"
+        android:icon="@drawable/food"
+        android:title="Recetas" />
+    <item
+        android:id="@+id/nav_ingredients"
+        android:icon="@drawable/aguacate"
+        android:title="Ingredientes" />
+</menu>

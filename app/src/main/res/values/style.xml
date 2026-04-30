@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Button">
+
+    </style>
+
+    <style name="Button.Eliminar">
+        <item name="backgroundTint">@color/md_theme_error</item>
+        <item name="android:textColor">@color/md_theme_errorContainer</item>
+    </style>
+
+    <style name="Button.Editar">
+        <item name="backgroundTint">@color/md_theme_onTertiaryContainer</item>
+        <item name="android:textColor">@color/md_theme_onError</item>
+    </style>
+</resources>
