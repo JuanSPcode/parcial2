@@ -18,10 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.parcial2_sp23002.Activity.AddEditIngredientActivity;
 import com.example.parcial2_sp23002.Adapter.IngredientAdapter;
 import com.example.parcial2_sp23002.AppDatabase;
+import com.example.parcial2_sp23002.DAO.IngredientDao;
 import com.example.parcial2_sp23002.Entity.Ingredient;
 import com.example.parcial2_sp23002.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import java.util.List;
 
 public class IngredientFragment extends Fragment implements IngredientAdapter.OnIngredientClickListener {
 
@@ -41,13 +43,10 @@ public class IngredientFragment extends Fragment implements IngredientAdapter.On
         adapter = new IngredientAdapter(new ArrayList<>(), this);
         rv.setAdapter(adapter);
 
-        db.ingredientDao().getAllIngredients().observe(getViewLifecycleOwner(), ingredients -> {
-            adapter.setIngrediente(ingredients);
-        });
-
         launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    loadIngredients();
                 }
         );
 
@@ -61,6 +60,17 @@ public class IngredientFragment extends Fragment implements IngredientAdapter.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadIngredients();
+    }
+
+    private void loadIngredients() {
+        List<IngredientDao.IngredientWithRecipe> ingredients = db.ingredientDao().getAllIngredientsWithRecipeName();
+        adapter.setIngredientesConReceta(ingredients);
+    }
+
+    @Override
     public void onEditClick(Ingredient ingredient) {
         Intent intent = new Intent(getContext(), AddEditIngredientActivity.class);
         intent.putExtra("INGREDIENT_ID", ingredient.idIngredient);
@@ -69,19 +79,14 @@ public class IngredientFragment extends Fragment implements IngredientAdapter.On
 
     @Override
     public void onDeleteClick(Ingredient ingredient) {
-
-
-
         new AlertDialog.Builder(getContext())
                 .setTitle("Eliminar")
-                .setMessage("Esta seguro de eliminar ->" + ingredient.name + "?")
-                .setPositiveButton("SI", (dialog, which) -> {
+                .setMessage("¿Está seguro de eliminar \"" + ingredient.name + "\"?")
+                .setPositiveButton("SÍ", (dialog, which) -> {
                     db.ingredientDao().eliminar(ingredient.idIngredient);
+                    loadIngredients();
                     Toast.makeText(getContext(), "Ingrediente eliminado", Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton("No", (dialog, which) -> {
-                    Toast.makeText(getContext(), "Accion cancelada", Toast.LENGTH_SHORT).show();
-                }).show();
+                .setNegativeButton("No", null).show();
     }
 }
-

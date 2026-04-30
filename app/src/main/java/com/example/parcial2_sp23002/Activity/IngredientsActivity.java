@@ -15,6 +15,7 @@ import com.example.parcial2_sp23002.Entity.Ingredient;
 import com.example.parcial2_sp23002.R;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
+import java.util.List;
 
 public class IngredientsActivity extends AppCompatActivity implements IngredientAdapter.OnIngredientClickListener {
 
@@ -43,29 +44,39 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
         adapter = new IngredientAdapter(new ArrayList<>(), this);
         rvIngredients.setAdapter(adapter);
 
-        db.ingredientDao().getIngredientsForRecipe(recipeId).observe(this, ingredients -> {
-            adapter.setIngrediente(ingredients);
-        });
+        loadIngredients();
+    }
+
+    private void loadIngredients() {
+        List<Ingredient> ingredients = db.ingredientDao().getIngredientsForRecipe(recipeId);
+        adapter.setIngrediente(ingredients);
     }
 
     @Override
     public void onEditClick(Ingredient ingredient) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Editar Cantidad");
+        builder.setTitle("Editar Ingrediente");
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit_quantity, null);
         builder.setView(view);
 
+        TextInputEditText etName = view.findViewById(R.id.etEditIngredientName);
         TextInputEditText etQuantity = view.findViewById(R.id.etEditQuantity);
+        
+        etName.setText(ingredient.name);
         etQuantity.setText(ingredient.quantity);
 
         builder.setPositiveButton("Actualizar", (dialog, which) -> {
+            String newName = etName.getText().toString().trim();
             String newQty = etQuantity.getText().toString().trim();
-            if (!newQty.isEmpty()) {
+            
+            if (!newName.isEmpty() && !newQty.isEmpty()) {
+                ingredient.name = newName;
                 ingredient.quantity = newQty;
                 db.ingredientDao().actualizar(ingredient);
-                Toast.makeText(this, "Cantidad actualizada", Toast.LENGTH_SHORT).show();
+                loadIngredients();
+                Toast.makeText(this, "Ingrediente actualizado", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "La cantidad no puede estar vacía", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Los campos no pueden estar vacíos", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton("Cancelar", null);
@@ -79,6 +90,7 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
                 .setMessage("¿Estás seguro de eliminar \"" + ingredient.name + "\"?")
                 .setPositiveButton("Sí", (dialog, which) -> {
                     db.ingredientDao().eliminar(ingredient.idIngredient);
+                    loadIngredients();
                     Toast.makeText(this, "Ingrediente eliminado", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("No", null)

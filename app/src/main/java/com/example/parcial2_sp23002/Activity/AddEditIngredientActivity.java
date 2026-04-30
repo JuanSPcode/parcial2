@@ -43,20 +43,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         ingredientId = getIntent().getIntExtra("INGREDIENT_ID", -1);
         int initialRecipeId = getIntent().getIntExtra("RECIPE_ID", -1);
 
-        db.recipeDao().getAllRecipes().observe(this, recipes -> {
-            recipeList.clear();
-            recipeList.addAll(recipes);
-            spinnerAdapter.notifyDataSetChanged();
-
-            if (ingredientId != -1) {
-                Ingredient ingredient = db.ingredientDao().getIngredientById(ingredientId);
-                if (ingredient != null) {
-                    setSpinnerSelection(ingredient.recipeId);
-                }
-            } else if (initialRecipeId != -1) {
-                setSpinnerSelection(initialRecipeId);
-            }
-        });
+        loadRecipesAndData(initialRecipeId);
 
         if (ingredientId != -1) {
             setTitle("Editar Ingrediente");
@@ -70,6 +57,22 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         }
 
         btnSave.setOnClickListener(v -> saveIngredient());
+    }
+
+    private void loadRecipesAndData(int initialRecipeId) {
+        List<Recipe> recipes = db.recipeDao().getAllRecipes();
+        recipeList.clear();
+        recipeList.addAll(recipes);
+        spinnerAdapter.notifyDataSetChanged();
+
+        if (ingredientId != -1) {
+            Ingredient ingredient = db.ingredientDao().getIngredientById(ingredientId);
+            if (ingredient != null) {
+                setSpinnerSelection(ingredient.recipeId);
+            }
+        } else if (initialRecipeId != -1) {
+            setSpinnerSelection(initialRecipeId);
+        }
     }
 
     private void setSpinnerSelection(int recipeId) {

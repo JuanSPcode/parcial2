@@ -26,6 +26,9 @@
         <activity
             android:name=".Activity.AddEditIngredientActivity"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Activity.IngredientsActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

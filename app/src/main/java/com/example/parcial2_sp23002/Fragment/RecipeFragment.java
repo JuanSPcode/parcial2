@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parcial2_sp23002.Activity.AddEditRecipeActivity;
+import com.example.parcial2_sp23002.Activity.IngredientsActivity;
 import com.example.parcial2_sp23002.Adapter.RecipeAdapter;
 import com.example.parcial2_sp23002.AppDatabase;
 import com.example.parcial2_sp23002.Entity.Recipe;
@@ -25,6 +26,7 @@ import com.example.parcial2_sp23002.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeFragment extends Fragment implements RecipeAdapter.OnRecipeClickListener {
 
@@ -44,15 +46,11 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnRecipeCl
         adapter = new RecipeAdapter(new ArrayList<>(), this);
         rv.setAdapter(adapter);
 
-        db.recipeDao().getAllRecipes().observe(getViewLifecycleOwner(), recipes -> {
-            adapter.actualizar(recipes);
-        });
-
         launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        // LiveData updates automatically
+                        loadRecipes();
                     }
                 }
         );
@@ -67,8 +65,22 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnRecipeCl
     }
 
     @Override
-    public void onRecipeClick(Recipe recipe) {
+    public void onResume() {
+        super.onResume();
+        loadRecipes();
+    }
 
+    private void loadRecipes() {
+        List<Recipe> recipes = db.recipeDao().getAllRecipes();
+        adapter.actualizar(recipes);
+    }
+
+    @Override
+    public void onRecipeClick(Recipe recipe) {
+        Intent intent = new Intent(getContext(), IngredientsActivity.class);
+        intent.putExtra("RECIPE_ID", recipe.idRecipe);
+        intent.putExtra("RECIPE_NAME", recipe.name);
+        startActivity(intent);
     }
 
     @Override
@@ -80,17 +92,14 @@ public class RecipeFragment extends Fragment implements RecipeAdapter.OnRecipeCl
 
     @Override
     public void onDeleteClick(Recipe recipe) {
-
         new AlertDialog.Builder(getContext())
                 .setTitle("Eliminar")
-                .setMessage("Esta seguro de eliminar ->" + recipe.name + "?")
-                .setPositiveButton("SI", (dialog, which) -> {
+                .setMessage("¿Está seguro de eliminar \"" + recipe.name + "\"? Se eliminarán también sus ingredientes.")
+                .setPositiveButton("SÍ", (dialog, which) -> {
                     db.recipeDao().deleteRecipe(recipe);
+                    loadRecipes();
                     Toast.makeText(getContext(), "Receta eliminada", Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton("No", (dialog, which) -> {
-                    Toast.makeText(getContext(), "Accion cancelada", Toast.LENGTH_SHORT).show();
-                }).show();
-        }
-
+                .setNegativeButton("No", null).show();
     }
+}

@@ -44,6 +44,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.VH> {
         holder.txtPorciones.setText("Porciones: " + recipe.servings);
 
         holder.itemView.setOnClickListener(v -> listener.onRecipeClick(recipe));
+        holder.btnVer.setOnClickListener(v -> listener.onRecipeClick(recipe));
         holder.btnEdit.setOnClickListener(v -> listener.onEditClick(recipe));
         holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(recipe));
     }
@@ -60,7 +61,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.VH> {
 
     static class VH extends RecyclerView.ViewHolder {
         TextView txtNombre, txtDescripcion, txtPorciones;
-        Button btnEdit, btnDelete;
+        Button btnEdit, btnDelete, btnVer;
 
         public VH(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +70,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.VH> {
             txtPorciones = itemView.findViewById(R.id.porcionesRecipeItem);
             btnEdit = itemView.findViewById(R.id.editarRecipeItem);
             btnDelete = itemView.findViewById(R.id.eliminarRecipeItem);
+            btnVer = itemView.findViewById(R.id.verIngrediente);
         }
     }
 }
