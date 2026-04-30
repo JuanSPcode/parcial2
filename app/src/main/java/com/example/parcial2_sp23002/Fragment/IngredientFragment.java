@@ -47,7 +47,8 @@ public class IngredientFragment extends Fragment implements IngredientAdapter.On
 
         launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                result -> { }
+                result -> {
+                }
         );
 
         FloatingActionButton fab = view.findViewById(R.id.fabAdd);
@@ -83,5 +84,5 @@ public class IngredientFragment extends Fragment implements IngredientAdapter.On
                     Toast.makeText(getContext(), "Accion cancelada", Toast.LENGTH_SHORT).show();
                 }).show();
     }
-    }
 }
+
